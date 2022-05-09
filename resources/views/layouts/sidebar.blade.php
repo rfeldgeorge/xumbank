@@ -90,13 +90,16 @@
       </li>
       <li class="menu-item">
         <a
-          href="#"
-          target="_blank"
+        href="{{ route('logout') }}" onclick="event.preventDefault(); 
+        document.getElementById('logout-form').submit();"
           class="menu-link"
         >
           <i class="menu-icon tf-icons bx bx-support"></i>
-          <div data-i18n="Support">Support</div>
+          <div data-i18n="Support">Logout</div>
         </a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+          {{ csrf_field() }}
+        </form>
       </li>
   
     </ul>
