@@ -57,51 +57,35 @@ class UsersController extends Controller
         return response('Account Created Successfully', 200);
     }
 
-    // public function Users()
-    // {
-    //     $user = User::where('id', auth::user()->id)->first();
-    //     if($user->hasRole('admin'))
-    //     {
-    //         $users = User::where('creator_id', auth::user()->id)->get();
-    //     }
-    //     else{
-    //         if($user->hasRole('superadmin'))
-    //             $users = User::all();
-    //     }
-    //     response($users, 200)
-    // }
+    public function Users()
+    {
+        $users = User::all();
+        return response($users, 200);
+    }
 
-    // public function EditUser(User $user)
-    // {
-    //     $AuthUser = Auth::user();
-    //     if($AuthUser->hasRole('admin'))
-    //     {
-    //         $roles = Role::where('name', '!=', 'superadmin')->get();
-    //     }
-    //     else{
-    //         if($AuthUser->hasRole('superadmin'))
-    //             $roles = Role::all();
-    //     }
-    //     return  return response($user, $role 200)
-    // }
+    public function EditUser(User $user)
+    {
+        // $roles = Role::where('name', '!=', 'superadmin')->get();
+        // return response($role, 200)
+    }
 
-    // public function UpdateUser(Request $request, User $user)
-    // {
-    //     $user->update([
-    //         'name' => $request->name,
-    //         'lname' => $request->lname,
-    //         'phone' => $request->phone,
-    //         'email' => $request->email,
-    //     ]);
-    //     $user->roles()->sync($request->roles);
-    //     return response('You\'ve Succesfffully Updated user', 200);
-    // }
+    public function UpdateUser(Request $request, User $user)
+    {
+        $user->update([
+            'name' => $request->name,
+            'lname' => $request->lname,
+            'phone' => $request->phone,
+            'email' => $request->email,
+        ]);
+        $user->roles()->sync($request->roles);
+        return response('You\'ve Succesfffully Updated user', 200);
+    }
 
-    // public function destroy(User $user)
-    // {
-    //    $user->roles()->detach();
-    //    $user->account()->delete();
-    //    $user->delete();
-    //    return response('You\'ve Succesfffully deleted user', 204);
-    // }
+    public function destroy(User $user)
+    {
+       $user->roles()->detach();
+       $user->account()->delete();
+       $user->delete();
+       return response('You\'ve Succesfffully deleted user', 204);
+    }
 }
