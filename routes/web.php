@@ -2,13 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
-    return view('login');
+    return view('welcome');
 });
 
-// Auth::routes();
+Auth::routes();
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::any('{slug}', function(){
-    return view('home');
+
+
+Route::group(['middleware' => ['auth:sanctum']], function (){
+    Route::any('{slug}', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 });
