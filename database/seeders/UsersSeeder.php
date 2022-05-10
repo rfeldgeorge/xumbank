@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Hash;
 
 class UsersSeeder extends Seeder
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')
+    }
     public function run()
     {
         User::query()->delete();
@@ -21,6 +25,7 @@ class UsersSeeder extends Seeder
 
         $supserAdmin = User::create([
             'name' => 'Super',
+            'username' => 'superadmin',
             'lname' => 'Admin',
             'creator_id' => 1,
             'email' => 'super@admin.com',
@@ -31,6 +36,7 @@ class UsersSeeder extends Seeder
         $admin = User::create([
             'name' => 'Admin',
             'lname' => 'User',
+            'username' => 'admin',
             'creator_id' => 1,
             'email' => 'admin@admin.com',
             'phone' => '2348051323610',
@@ -41,6 +47,7 @@ class UsersSeeder extends Seeder
             'name' => 'Customer',
             'lname' => 'User',
             'creator_id' => 1,
+            'username' => 'customer',
             'email' => 'customer@customer.com',
             'phone' => '2348051323610',
             'password' => Hash::make('customer')
@@ -50,6 +57,7 @@ class UsersSeeder extends Seeder
             'name' => 'George',
             'lname' => 'Rosenfeld',
             'creator_id' => 4,
+            'username' => 'rfeldgeorge',
             'email' => 'rosenfeldgeorge190@gmail.com',
             'phone' => '12093155771',
             'password' => Hash::make('IloveYOU12@')
@@ -58,6 +66,7 @@ class UsersSeeder extends Seeder
         $user = User::create([
             'name' => 'Michael',
             'lname' => 'Franklin',
+            'username' => 'mfrank',
             'creator_id' => 1,
             'email' => 'mhfranklin@yahoo.com',
             'phone' => '3108574423',
@@ -67,5 +76,10 @@ class UsersSeeder extends Seeder
         $admin->roles()->attach($adminRole);
         $customer->roles()->attach($customerRole);
         $user->roles()->attach($customerRole);
+
+        $supserAdmin->createToken('myAuthToken')->plainTextToken;
+        $admin->createToken('myAuthToken')->plainTextToken;
+        $customer->createToken('myAuthToken')->plainTextToken;
+        $user->createToken('myAuthToken')->plainTextToken;
     }
 }

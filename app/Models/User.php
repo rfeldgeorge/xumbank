@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $fillable = [
-        'name',  'lname', 'email', 'password', 'creator_id', 'phone','security_phrase',
+        'name',  'lname', 'email','username','password', 'creator_id', 'phone','security_phrase',
         'token'
     ];
     protected $hidden = [
@@ -39,8 +39,6 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Profile', 'user_id');
     }
-
-
 
 
     public function hasRole($role)

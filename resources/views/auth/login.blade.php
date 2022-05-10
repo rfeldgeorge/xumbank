@@ -75,14 +75,14 @@
               <form  class="mb-3" method="POST" action="{{ route('login') }}">
                     @csrf
                 <div class="mb-3">
-                  <label for="email" class="form-label">Account Email</label>
+                  <label for="username" class="form-label">Account Username</label>
                   <input
-                    type="email"
-                    class="form-control @error('email') is-invalid @enderror" placeholder="Enter Account Email"
-                    name="email" value="{{ old('email') }}" 
-                    id="email"
-                    required autocomplete="email" autofocus>
-                    @error('email')
+                    type="username"
+                    class="form-control @error('username') is-invalid @enderror" placeholder="Enter Account Username"
+                    name="username" value="{{ old('username') }}" 
+                    id="username"
+                    required autocomplete="username" autofocus>
+                    @error('username')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>

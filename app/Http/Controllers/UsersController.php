@@ -6,6 +6,8 @@ use auth;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Access\Gate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,6 +19,7 @@ class UsersController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'lname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'username' => ['required', 'string', 'username', 'max:255', 'unique:users'],
             'phone' => ['required'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -28,6 +31,7 @@ class UsersController extends Controller
                 'lname' => $request->lname,
                 'creator_id' => $creator,
                 'email' => $request->email,
+                'username' => $request->username,
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password),
             ]);
@@ -48,25 +52,50 @@ class UsersController extends Controller
                 $user = [
                     'name' => $request->lname,
                     'email' => $request->email,
+                    'username' => $request->username,
                     'password' => $request->password,
                     'accNumber' => $transaction->account_number
                 ];
                 // Mail::to([$request->email])->send(new WelcomeMail($user));
             }
         });
-        return response('Account Created Successfully', 200);
+        return new JsonResponse(['message' => trans('Account Created Successfully')], 200);
     }
 
     public function Users()
     {
-        $users = User::all();
-        return response($users, 200);
+        if(Gate::denies('dashboardPermission')){
+            return new JsonResponse(['message' => trans('Access denied')], 404);
+        }
+        $user = User::where('id', auth::user()->id)->first();
+        if($user->hasRole('admin')){
+            $users = User::where('creator_id', auth::user()->id)->get();
+        }
+        else
+        {
+            if($user->hasRole('superadmin')){
+                $users = User::all();
+            }
+        }
+        return new JsonResponse(['message' => trans($users)], 200);
     }
 
     public function EditUser(User $user)
     {
-        // $roles = Role::where('name', '!=', 'superadmin')->get();
-        // return response($role, 200)
+        if(Gate::denies('edit-user')){
+            return new JsonResponse(['message' => trans('Access denied')], 404);
+        }
+        $user = Auth::user();
+        if($user->hasRole('admin')){
+            $roles = Role::where('name', '!=', 'superadmin')->get();
+        }
+        else
+        {
+            if($user->hasRole('superadmin')){
+                $roles = Role::all();
+            }
+        }
+        return new JsonResponse(['message' => trans([$roles, $users])], 200);
     }
 
     public function UpdateUser(Request $request, User $user)
@@ -76,16 +105,20 @@ class UsersController extends Controller
             'lname' => $request->lname,
             'phone' => $request->phone,
             'email' => $request->email,
+            'username' => $request->username,
         ]);
         $user->roles()->sync($request->roles);
-        return response('You\'ve Succesfffully Updated user', 200);
+        return new JsonResponse(['message' => trans('You\'ve Succesfffully Updated user')], 200);
     }
 
     public function destroy(User $user)
     {
+        if(Gate::denies('delete-user')){
+            return new JsonResponse(['message' => trans('Access denied')], 404);
+        }
        $user->roles()->detach();
        $user->account()->delete();
        $user->delete();
-       return response('You\'ve Succesfffully deleted user', 204);
+       return new JsonResponse(['message' => trans('You\'ve Succesfffully deleted user')], 204);
     }
 }
